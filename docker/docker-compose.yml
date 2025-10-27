@@ -1,0 +1,24 @@
+version: "3.9"
+
+services:
+  postgres:
+    image: postgres:16
+    container_name: postgres-qrcode
+    restart: always
+    environment:
+      POSTGRES_DB: qrcode-database
+      POSTGRES_USER: lucas
+      POSTGRES_PASSWORD: murta
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - qrcode-network
+
+volumes:
+  postgres_data:
+
+networks:
+  qrcode-network:
+    driver: bridge
