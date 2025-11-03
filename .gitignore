@@ -1,3 +1,38 @@
+@ApplicationScoped
+public class UserService {
+
+    private static final Logger LOG = Logger.getLogger(UserService.class);
+    private final RedisClient redisClient;
+
+    public UserService(RedisClient redisClient) {
+        this.redisClient = redisClient;
+    }
+
+    public void saveUser(User user) {
+        // 🔹 Salva rapidamente no Redis
+        redisClient.set(List.of("user:" + user.email, user.name));
+
+        LOG.info("Usuário salvo no Redis: " + user.email);
+
+        // 🔹 Cria uma Virtual Thread para salvar no banco
+        Thread.startVirtualThread(() -> persistUser(user));
+    }
+
+    @Transactional
+    void persistUser(User user) {
+        try {
+            Thread.sleep(2000); // Simula processo demorado
+            user.persist();
+            LOG.info("Usuário persistido no banco: " + user.email);
+        } catch (Exception e) {
+            LOG.error("Erro ao persistir usuário", e);
+        }
+    }
+}
+
+
+
+
 #Maven
 target/
 pom.xml.tag
