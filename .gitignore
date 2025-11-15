@@ -1,80 +1,33 @@
-@ApplicationScoped
-public class UserService {
-
-    private static final Logger LOG = Logger.getLogger(UserService.class);
-    private final RedisClient redisClient;
-
-    public UserService(RedisClient redisClient) {
-        this.redisClient = redisClient;
-    }
-
-    public void saveUser(User user) {
-        // 🔹 Salva rapidamente no Redis
-        redisClient.set(List.of("user:" + user.email, user.name));
-
-        LOG.info("Usuário salvo no Redis: " + user.email);
-
-        // 🔹 Cria uma Virtual Thread para salvar no banco
-        Thread.startVirtualThread(() -> persistUser(user));
-    }
-
-    @Transactional
-    void persistUser(User user) {
-        try {
-            Thread.sleep(2000); // Simula processo demorado
-            user.persist();
-            LOG.info("Usuário persistido no banco: " + user.email);
-        } catch (Exception e) {
-            LOG.error("Erro ao persistir usuário", e);
-        }
-    }
-}
-
-
-
-
-#Maven
+HELP.md
 target/
-pom.xml.tag
-pom.xml.releaseBackup
-pom.xml.versionsBackup
-release.properties
-.flattened-pom.xml
+.mvn/wrapper/maven-wrapper.jar
+!**/src/main/**/target/
+!**/src/test/**/target/
 
-# Eclipse
-.project
+### STS ###
+.apt_generated
 .classpath
-.settings/
-bin/
-
-# IntelliJ
-.idea
-*.ipr
-*.iml
-*.iws
-
-# NetBeans
-nb-configuration.xml
-
-# Visual Studio Code
-.vscode
 .factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
 
-# OSX
-.DS_Store
+### IntelliJ IDEA ###
+.idea
+*.iws
+*.iml
+*.ipr
 
-# Vim
-*.swp
-*.swo
+### NetBeans ###
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+build/
+!**/src/main/**/build/
+!**/src/test/**/build/
 
-# patch
-*.orig
-*.rej
-
-# Local environment
-.env
-
-# Plugin directory
-/.quarkus/cli/plugins/
-# TLS Certificates
-.certs/
+### VS Code ###
+.vscode/
